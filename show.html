@@ -1,0 +1,36 @@
+  
+<html>
+<body>
+{%if students %}
+<table>
+ 
+         <thead>
+            <tr>
+		 	
+               <th>Name</th>
+               <th>City</th>
+               <th>Address</th>
+               <th>Pin</th>
+            </tr>
+         </thead>
+
+         <body>
+            {% for student in students %}
+               <tr>
+		   
+                  <td>{{ student.name }}</td>
+                  <td>{{ student.city }}</td>
+                  <td>{{ student.addr }}</td>
+                  <td>{{ student.pin }}</td>
+               </tr>
+            {% endfor %}
+         </body>
+
+      </table>
+{%else %}
+<h1> NO RECORDS </H1>
+{% endif %}
+
+
+   </body>
+</html>
