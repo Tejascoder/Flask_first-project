@@ -1,0 +1,79 @@
+from flask import Flask, render_template, request,url_for, redirect
+import sqlite3 as sql
+from flask_sqlalchemy import SQLAlchemy
+
+
+
+app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///stf.sqlite3'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']= True
+
+app.config['SECRET_KEY']='ajvnadjf'
+
+db = SQLAlchemy(app)
+
+class students(db.Model):
+   
+   id = db.Column(db.Integer,primary_key = True)
+   name = db.Column(db.String(100))
+   city = db.Column(db.String(50))  
+   addr = db.Column(db.String(200))
+   pin = db.Column(db.String(10))
+
+   def __init__(self,name, city, addr,pin):
+      
+      self.name = name
+      self.city = city
+      self.addr = addr
+      self.pin = pin
+db.create_all()
+ 
+@app.route('/index')
+def home():
+   return(render_template('home.html'))
+
+
+
+@app.route('/enternew')
+def new():
+   return(render_template('student.html'))
+
+@app.route('/addrec', methods= ["POST", "GET"])
+def add():
+   
+   if request.method == 'POST':
+      student = students(request.form['name'],request.form['city'], request.form['addr'],request.form['pin'])
+      
+      db.session.add(student)
+      db.session.commit()
+       
+
+      return('RECORD ADDED <a href = "/index">Go back to home page</a>')     
+
+   else:
+      
+      return(render_template('student.html'))
+   
+   
+
+
+
+
+@app.route('/list')
+def show():
+   
+    
+   return(render_template('show.html', students= students.query.all() ))
+
+
+
+@app.route('/delete')
+def delete():   
+   students.query.delete()
+   db.session.commit()
+   return('RECORDS ARE DELETED!!!!!!'   + str(' <a href = "/index">Go back to home page</a>'))
+   
+
+if __name__ == '__main__':
+   app.run(debug = True)
